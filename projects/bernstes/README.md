@@ -1,1 +1,1 @@
-Samuel Bernstein - bernstes
+This is my assignment-1 submission!
