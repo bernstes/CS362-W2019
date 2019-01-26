@@ -643,6 +643,104 @@ int getCost(int cardNumber)
   return -1;
 }
 
+int adventurer_function(struct gameState *state, int drawntreasure, int currentPlayer, int cardDrawn, int temphand[], int z){
+    while(drawntreasure<2){
+        if (state->deckCount[currentPlayer] <1){//if the deck is empty we need to shuffle discard and add to deck
+            shuffle(currentPlayer, state);
+        }
+        drawCard(currentPlayer, state);
+        cardDrawn = state->hand[currentPlayer][state->handCount[currentPlayer]-1];//top card of hand is most recently drawn card.
+        if (cardDrawn == copper || cardDrawn == silver || cardDrawn == gold)
+            drawntreasure++;
+        else{
+            temphand[z]=cardDrawn;
+            state->handCount[currentPlayer]--; //this should just remove the top card (the most recently drawn one).
+            z++;
+        }
+    }
+    while(z-1>=0){
+        state->discard[currentPlayer][state->discardCount[currentPlayer]++]=temphand[z-1]; // discard all cards in play that have been drawn
+        z=z-1;
+    }
+    return 0;
+}
+
+int smithy_function(struct gameState *state, int i, int currentPlayer, int handPos){
+    for (i = 0; i < 3; i++)
+    {
+        drawCard(currentPlayer, state);
+    }
+
+    //discard card from hand
+    discardCard(handPos, currentPlayer, state, 0);
+    return 0;
+}
+
+int outpost_function(struct gameState *state, int handPos, int currentPlayer){
+    //set outpost flag
+    state->outpostPlayed++;
+
+    //discard card
+    discardCard(handPos, currentPlayer, state, 0);
+    return 0;
+}
+
+int council_room_function(struct gameState *state, int i, int currentPlayer, int handPos){
+    //+4 Cards
+    for (i = 0; i < 4; i++)
+    {
+        drawCard(currentPlayer, state);
+    }
+
+    //+1 Buy
+    state->numBuys++;
+
+    //Each other player draws a card
+    for (i = 0; i < state->numPlayers; i++)
+    {
+        if ( i != currentPlayer )
+        {
+            drawCard(i, state);
+        }
+    }
+
+    //put played card in played card pile
+    discardCard(handPos, currentPlayer, state, 0);
+
+    return 0;
+}
+
+int treasure_map_function(struct gameState *state, int index, int i, int currentPlayer, int handPos){
+    //search hand for another treasure_map
+    index = -1;
+    for (i = 0; i < state->handCount[currentPlayer]; i++)
+    {
+        if (state->hand[currentPlayer][i] == treasure_map && i != handPos)
+        {
+            index = i;
+            break;
+        }
+    }
+    if (index > -1)
+    {
+        //trash both treasure cards
+        discardCard(handPos, currentPlayer, state, 1);
+        discardCard(index, currentPlayer, state, 1);
+
+        //gain 4 Gold cards
+        for (i = 0; i < 4; i++)
+        {
+            gainCard(gold, state, 1, currentPlayer);
+        }
+
+        //return success
+        return 1;
+    }
+
+    //no second treasure_map found in hand
+    return -1;
+}
+
 int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus)
 {
   int i;
@@ -667,6 +765,9 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
   switch( card ) 
     {
     case adventurer:
+        //(struct gameState *state, int drawntreasure, int currentPlayer, int cardDrawn, int temphand[], int z)
+        return adventurer_function(state, drawntreasure, currentPlayer, cardDrawn, temphand, z);
+        /*
       while(drawntreasure<2){
 	if (state->deckCount[currentPlayer] <1){//if the deck is empty we need to shuffle discard and add to deck
 	  shuffle(currentPlayer, state);
@@ -685,9 +786,12 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 	state->discard[currentPlayer][state->discardCount[currentPlayer]++]=temphand[z-1]; // discard all cards in play that have been drawn
 	z=z-1;
       }
-      return 0;
+         */
 			
     case council_room:
+        //(struct gameState *state, int i, int currentPlayer, int handPos)
+        return council_room_function(state, i, currentPlayer, handPos);
+           /*
       //+4 Cards
       for (i = 0; i < 4; i++)
 	{
@@ -708,8 +812,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 			
       //put played card in played card pile
       discardCard(handPos, currentPlayer, state, 0);
-			
-      return 0;
+			*/
 			
     case feast:
       //gain card with cost up to 5
@@ -829,6 +932,9 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case smithy:
+        //(struct gameState *state, int i, int currentPlayer, int handPos)
+        return smithy_function(state, i, currentPlayer, handPos);
+        /*
       //+3 Cards
       for (i = 0; i < 3; i++)
 	{
@@ -837,7 +943,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 			
       //discard card from hand
       discardCard(handPos, currentPlayer, state, 0);
-      return 0;
+         */
 		
     case village:
       //+1 Card
@@ -1156,12 +1262,15 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case outpost:
+        //(struct gameState *state, int handPos, int currentPlayer)
+        return outpost_function(state, handPos, currentPlayer);
+        /*
       //set outpost flag
       state->outpostPlayed++;
 			
       //discard card
       discardCard(handPos, currentPlayer, state, 0);
-      return 0;
+         */
 		
     case salvager:
       //+1 buy
@@ -1190,6 +1299,9 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
       return 0;
 		
     case treasure_map:
+        //(struct gameState *state, int index, int i, int currentPlayer, int handPos)
+        return treasure_map_function(state, index, i, currentPlayer, handPos);
+        /*
       //search hand for another treasure_map
       index = -1;
       for (i = 0; i < state->handCount[currentPlayer]; i++)
@@ -1218,6 +1330,7 @@ int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState
 			
       //no second treasure_map found in hand
       return -1;
+         */
     }
 	
   return -1;
