@@ -642,7 +642,7 @@ int getCost(int cardNumber)
 	
   return -1;
 }
-
+//bug - drawntreasure will register smithy, adventurer, or gardens as treasure cards rather than copper, silver, and gold
 int adventurer_function(struct gameState *state, int drawntreasure, int currentPlayer, int cardDrawn, int temphand[], int z){
     while(drawntreasure<2){
         if (state->deckCount[currentPlayer] <1){//if the deck is empty we need to shuffle discard and add to deck
@@ -650,7 +650,9 @@ int adventurer_function(struct gameState *state, int drawntreasure, int currentP
         }
         drawCard(currentPlayer, state);
         cardDrawn = state->hand[currentPlayer][state->handCount[currentPlayer]-1];//top card of hand is most recently drawn card.
-        if (cardDrawn == copper || cardDrawn == silver || cardDrawn == gold)
+        //if (cardDrawn == copper || cardDrawn == silver|| cardDrawn == gold)
+        //drawntreasure will register smithy, adventurer, or gardens as treasure cards
+        if (cardDrawn == smithy || cardDrawn == adventurer || cardDrawn == gardens)
             drawntreasure++;
         else{
             temphand[z]=cardDrawn;
@@ -664,9 +666,10 @@ int adventurer_function(struct gameState *state, int drawntreasure, int currentP
     }
     return 0;
 }
-
+//bug - player will draw 10 cards instead of 3
 int smithy_function(struct gameState *state, int i, int currentPlayer, int handPos){
-    for (i = 0; i < 3; i++)
+    //player will draw 10 cards instead of the normal 3 cards
+    for (i = 0; i < 10; i++)
     {
         drawCard(currentPlayer, state);
     }
@@ -676,6 +679,7 @@ int smithy_function(struct gameState *state, int i, int currentPlayer, int handP
     return 0;
 }
 
+//no bugs introduced to this function
 int outpost_function(struct gameState *state, int handPos, int currentPlayer){
     //set outpost flag
     state->outpostPlayed++;
@@ -685,6 +689,7 @@ int outpost_function(struct gameState *state, int handPos, int currentPlayer){
     return 0;
 }
 
+//bug - 1 buy will be removed instead of being incremented
 int council_room_function(struct gameState *state, int i, int currentPlayer, int handPos){
     //+4 Cards
     for (i = 0; i < 4; i++)
@@ -693,7 +698,10 @@ int council_room_function(struct gameState *state, int i, int currentPlayer, int
     }
 
     //+1 Buy
-    state->numBuys++;
+    //state->numBuys++;
+
+    //remove 1 buy instead of incrementing
+    state->numBuys--;
 
     //Each other player draws a card
     for (i = 0; i < state->numPlayers; i++)
@@ -710,6 +718,7 @@ int council_room_function(struct gameState *state, int i, int currentPlayer, int
     return 0;
 }
 
+//bug - card will return -1 if successful and 1 if no second treasure map was found in hand
 int treasure_map_function(struct gameState *state, int index, int i, int currentPlayer, int handPos){
     //search hand for another treasure_map
     index = -1;
@@ -734,11 +743,13 @@ int treasure_map_function(struct gameState *state, int index, int i, int current
         }
 
         //return success
-        return 1;
+        //return 1;
+        return -1;
     }
 
     //no second treasure_map found in hand
-    return -1;
+    //return -1;
+    return 1;
 }
 
 int cardEffect(int card, int choice1, int choice2, int choice3, struct gameState *state, int handPos, int *bonus)
