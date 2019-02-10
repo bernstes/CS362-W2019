@@ -76,6 +76,12 @@ struct gameState {
 /* All functions return -1 on failure, and DO NOT CHANGE GAME STATE;
    unless specified for other return, return 0 on success */
 
+int assert_true(int x);
+
+int compareInt(int a, int b);
+
+void expectation(int a, int b);
+
 struct gameState* newGame();
 
 int* kingdomCards(int k1, int k2, int k3, int k4, int k5, int k6, int k7,

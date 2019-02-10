@@ -5,6 +5,28 @@
 #include <math.h>
 #include <stdlib.h>
 
+
+int assert_true(int x){
+  if(x == 0){
+    printf("TEST SUCCESSFUL\n");
+  }
+  else{
+    printf("TEST FAILED\n");
+  }
+}
+
+int compareInt(int a, int b) {
+    if (a > b)
+        return 1;
+    if (a < b)
+        return -1;
+    return 0;
+}
+
+void expectation(int a, int b){
+    printf("Expected Value: %d, Actual Value: %d\n", a, b);
+}
+
 int compare(const void* a, const void* b) {
   if (*(int*)a > *(int*)b)
     return 1;
