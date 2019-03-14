@@ -1,3 +1,2 @@
 # CS362-W2019
-Software Engineering (CS 362) class's master repository for Winter 2019.
-Final Project Part B
+Software Engineering (CS 362) Final Project Part B
