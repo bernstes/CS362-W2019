@@ -141,39 +141,39 @@ int main(){
         cardEffect(council_room, 0, 0, 0, &testState, 0, 0);
 
         //Council Room should draw 4 from player's deck and discard itself after use
-        if(assert_true(compareInt(state.handCount[0] + 3, testState.handCount[0]))){
+        if(rand_assert_true(compareInt(state.handCount[0] + 3, testState.handCount[0]))){
             printf("\nTest 1: Play Council Room and Draw 4 Cards (net +3 after discard)\n");
-            expectation(state.handCount[0] + 3, testState.handCount[0]);
+            rand_expectation(state.handCount[0] + 3, testState.handCount[0]);
             test1++;
         }
 
         //Make sure the 4 cards are drawn from the player's own deck
-        if(assert_true(compareInt(state.deckCount[0] - 4, testState.deckCount[0]))){
+        if(rand_assert_true(compareInt(state.deckCount[0] - 4, testState.deckCount[0]))){
             printf("\nTest 2: Test for proper change in current player's deck count\n");
-            expectation(state.deckCount[0] - 4, testState.deckCount[0]);
+            rand_expectation(state.deckCount[0] - 4, testState.deckCount[0]);
             test2++;
         }
 
         //Make sure Player's buy count is increased by 1
-        if(assert_true(compareInt(state.numBuys + 1, testState.numBuys))){
+        if(rand_assert_true(compareInt(state.numBuys + 1, testState.numBuys))){
             printf("\nTest 3: Test for +1 increase in player's buy count\n");
-            expectation(state.numBuys + 1, testState.numBuys);
+            rand_expectation(state.numBuys + 1, testState.numBuys);
             test3++;
         }
 
         //Make sure the card increased the played card count after use
-        if(assert_true(compareInt(state.playedCardCount + 1, testState.playedCardCount))){
+        if(rand_assert_true(compareInt(state.playedCardCount + 1, testState.playedCardCount))){
             printf("\nTest 4: Test for +1 increase in played card count\n");
-            expectation(state.playedCardCount + 1, testState.playedCardCount);
+            rand_expectation(state.playedCardCount + 1, testState.playedCardCount);
             test4++;
         }
 
         //Make sure opponent hands increases by 1
         for(p = 1; p < numPlayers; p++){
             //printf("Testing player %d\n", p + 1);
-            if(assert_true(compareInt(state.handCount[p] + 1, testState.handCount[p]))){
+            if(rand_assert_true(compareInt(state.handCount[p] + 1, testState.handCount[p]))){
                 printf("\nTest 5: Test for +1 change in opponent's hand\n");
-                expectation(state.handCount[p] + 1, testState.handCount[p]);
+                rand_expectation(state.handCount[p] + 1, testState.handCount[p]);
                 test5++;
             }
         }
@@ -181,99 +181,99 @@ int main(){
         //Make sure opponent decks decreases by 1
         for(p = 1; p < numPlayers; p++) {
             //printf("Testing player %d\n", p + 1);
-            if(assert_true(compareInt(state.deckCount[p] - 1, testState.deckCount[p]))){
+            if(rand_assert_true(compareInt(state.deckCount[p] - 1, testState.deckCount[p]))){
                 printf("\nTest 6: Test for -1 change in opponent's deck\n");
-                expectation(state.deckCount[p] - 1, testState.deckCount[p]);
+                rand_expectation(state.deckCount[p] - 1, testState.deckCount[p]);
                 test6++;
             }
         }
 
         //Make sure there's no change to victory cards
         //printf("\nTest 7: Test for no changes in victory card piles\n");
-        if(assert_true(compareInt(state.supplyCount[estate], testState.supplyCount[estate]))){
+        if(rand_assert_true(compareInt(state.supplyCount[estate], testState.supplyCount[estate]))){
             printf("Test 7: Estate Card Count Mismatch\n");
-            expectation(state.supplyCount[estate], testState.supplyCount[estate]);
+            rand_expectation(state.supplyCount[estate], testState.supplyCount[estate]);
             test7++;
         }
-        if(assert_true(compareInt(state.supplyCount[duchy], testState.supplyCount[duchy]))){
+        if(rand_assert_true(compareInt(state.supplyCount[duchy], testState.supplyCount[duchy]))){
             printf("Test 7: Duchy Card Count Mismatch\n");
-            expectation(state.supplyCount[duchy], testState.supplyCount[duchy]);
+            rand_expectation(state.supplyCount[duchy], testState.supplyCount[duchy]);
             test7++;
         }
-        if(assert_true(compareInt(state.supplyCount[province], testState.supplyCount[province]))){
+        if(rand_assert_true(compareInt(state.supplyCount[province], testState.supplyCount[province]))){
             printf("Test 7: Province Card Count Mismatch\n");
-            expectation(state.supplyCount[province], testState.supplyCount[province]);
+            rand_expectation(state.supplyCount[province], testState.supplyCount[province]);
             test7++;
         }
 
         //Make sure there's no change to kingdom card piles
         //printf("\nTest 8: Test for no changes in kingdom card piles\n");
-        if(assert_true(compareInt(state.supplyCount[council_room], testState.supplyCount[council_room]))){
+        if(rand_assert_true(compareInt(state.supplyCount[council_room], testState.supplyCount[council_room]))){
             printf("Test 8: Kingdom Card 1 Mismatch\n");
-            expectation(state.supplyCount[council_room], testState.supplyCount[council_room]);
+            rand_expectation(state.supplyCount[council_room], testState.supplyCount[council_room]);
             test8++;
         }
-        if(assert_true(compareInt(state.supplyCount[k[1]], testState.supplyCount[k[1]]))){
+        if(rand_assert_true(compareInt(state.supplyCount[k[1]], testState.supplyCount[k[1]]))){
             printf("Test 8: Kingdom Card 2 Mismatch\n");
-            expectation(state.supplyCount[k[1]], testState.supplyCount[k[1]]);
+            rand_expectation(state.supplyCount[k[1]], testState.supplyCount[k[1]]);
             test8++;
         }
-        if(assert_true(compareInt(state.supplyCount[k[2]], testState.supplyCount[k[2]]))){
+        if(rand_assert_true(compareInt(state.supplyCount[k[2]], testState.supplyCount[k[2]]))){
             printf("Test 8: Kingdom Card 3 Mismatch\n");
-            expectation(state.supplyCount[k[2]], testState.supplyCount[k[2]]);
+            rand_expectation(state.supplyCount[k[2]], testState.supplyCount[k[2]]);
             test8++;
         }
-        if(assert_true(compareInt(state.supplyCount[k[3]], testState.supplyCount[k[3]]))){
+        if(rand_assert_true(compareInt(state.supplyCount[k[3]], testState.supplyCount[k[3]]))){
             printf("Test 8: Kingdom Card 4 Mismatch\n");
-            expectation(state.supplyCount[k[3]], testState.supplyCount[k[3]]);
+            rand_expectation(state.supplyCount[k[3]], testState.supplyCount[k[3]]);
             test8++;
         }
-        if(assert_true(compareInt(state.supplyCount[k[4]], testState.supplyCount[k[4]]))){
+        if(rand_assert_true(compareInt(state.supplyCount[k[4]], testState.supplyCount[k[4]]))){
             printf("Test 8: Kingdom Card 5 Mismatch\n");
-            expectation(state.supplyCount[k[4]], testState.supplyCount[k[4]]);
+            rand_expectation(state.supplyCount[k[4]], testState.supplyCount[k[4]]);
             test8++;
         }
-        if(assert_true(compareInt(state.supplyCount[k[5]], testState.supplyCount[k[5]]))){
+        if(rand_assert_true(compareInt(state.supplyCount[k[5]], testState.supplyCount[k[5]]))){
             printf("Test 8: Kingdom Card 6 Mismatch\n");
-            expectation(state.supplyCount[k[5]], testState.supplyCount[k[5]]);
+            rand_expectation(state.supplyCount[k[5]], testState.supplyCount[k[5]]);
             test8++;
         }
-        if(assert_true(compareInt(state.supplyCount[k[6]], testState.supplyCount[k[6]]))){
+        if(rand_assert_true(compareInt(state.supplyCount[k[6]], testState.supplyCount[k[6]]))){
             printf("Test 8: Kingdom Card 7 Mismatch\n");
-            expectation(state.supplyCount[k[6]], testState.supplyCount[k[6]]);
+            rand_expectation(state.supplyCount[k[6]], testState.supplyCount[k[6]]);
             test8++;
         }
-        if(assert_true(compareInt(state.supplyCount[k[7]], testState.supplyCount[k[7]]))){
+        if(rand_assert_true(compareInt(state.supplyCount[k[7]], testState.supplyCount[k[7]]))){
             printf("Test 8: Kingdom Card 8 Mismatch\n");
-            expectation(state.supplyCount[k[7]], testState.supplyCount[k[7]]);
+            rand_expectation(state.supplyCount[k[7]], testState.supplyCount[k[7]]);
             test8++;
         }
-        if(assert_true(compareInt(state.supplyCount[k[8]], testState.supplyCount[k[8]]))){
+        if(rand_assert_true(compareInt(state.supplyCount[k[8]], testState.supplyCount[k[8]]))){
             printf("Test 8: Kingdom Card 9 Mismatch\n");
-            expectation(state.supplyCount[k[8]], testState.supplyCount[k[8]]);
+            rand_expectation(state.supplyCount[k[8]], testState.supplyCount[k[8]]);
             test8++;
         }
-        if(assert_true(compareInt(state.supplyCount[k[9]], testState.supplyCount[k[9]]))){
+        if(rand_assert_true(compareInt(state.supplyCount[k[9]], testState.supplyCount[k[9]]))){
             printf("Test 8: Kingdom Card 10 Mismatch\n");
-            expectation(state.supplyCount[k[9]], testState.supplyCount[k[9]]);
+            rand_expectation(state.supplyCount[k[9]], testState.supplyCount[k[9]]);
             test8++;
         }
 
         //Make sure there's no change to coin card piles
         //printf("\nTest 9: Test for no changes in coin card piles\n");
-        if(assert_true(compareInt(state.supplyCount[copper], testState.supplyCount[copper]))){
+        if(rand_assert_true(compareInt(state.supplyCount[copper], testState.supplyCount[copper]))){
             printf("Test 9: Copper Card Count Mismatch\n");
-            expectation(state.supplyCount[copper], testState.supplyCount[copper]);
+            rand_expectation(state.supplyCount[copper], testState.supplyCount[copper]);
             test9++;
         }
-        if(assert_true(compareInt(state.supplyCount[silver], testState.supplyCount[silver]))){
+        if(rand_assert_true(compareInt(state.supplyCount[silver], testState.supplyCount[silver]))){
             printf("Test 9: Silver Card Count Mismatch\n");
-            expectation(state.supplyCount[silver], testState.supplyCount[silver]);
+            rand_expectation(state.supplyCount[silver], testState.supplyCount[silver]);
             test9++;
         }
-        if(assert_true(compareInt(state.supplyCount[gold], testState.supplyCount[gold]))){
+        if(rand_assert_true(compareInt(state.supplyCount[gold], testState.supplyCount[gold]))){
             printf("Test 9: Gold Card Count Mismatch\n");
-            expectation(state.supplyCount[gold], testState.supplyCount[gold]);
+            rand_expectation(state.supplyCount[gold], testState.supplyCount[gold]);
             test9++;
         }
 
