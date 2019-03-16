@@ -13,31 +13,39 @@
 #include <string.h>
 
 /*
-//bug - drawntreasure will register smithy, adventurer, or gardens as treasure cards rather than copper, silver, and gold
-int adventurer_function(struct gameState *state, int drawntreasure, int currentPlayer, int cardDrawn, int temphand[], int z){
-    while(drawntreasure<2){
-        if (state->deckCount[currentPlayer] <1){//if the deck is empty we need to shuffle discard and add to deck
-            shuffle(currentPlayer, state);
-        }
-        drawCard(currentPlayer, state);
-        cardDrawn = state->hand[currentPlayer][state->handCount[currentPlayer]-1];//top card of hand is most recently drawn card.
-        //if (cardDrawn == copper || cardDrawn == silver|| cardDrawn == gold)
-        //drawntreasure will register smithy, adventurer, or gardens as treasure cards
-        if (cardDrawn == smithy || cardDrawn == adventurer || cardDrawn == gardens)
-            drawntreasure++;
-        else{
-            temphand[z]=cardDrawn;
-            state->handCount[currentPlayer]--; //this should just remove the top card (the most recently drawn one).
-            z++;
-        }
+int playAdventurer(struct gameState* state, int currentPlayer, int temphand[])
+{
+  int drawntreasure=0;
+  int cardDrawn;
+  int z = 0;// this is the counter for the temp hand
+
+  while(drawntreasure < 2)
+  {
+    if (state->deckCount[currentPlayer] < 1)//if the deck is empty we need to shuffle discard and add to deck
+      shuffle(currentPlayer, state);
+
+  drawCard(currentPlayer, state);
+  cardDrawn = state->hand[currentPlayer][state->handCount[currentPlayer]-1];//top card of hand is most recently drawn card.
+
+    if (cardDrawn == copper || cardDrawn == silver)
+      drawntreasure++;
+    else
+    {
+      temphand[z]=cardDrawn;
+      state->handCount[currentPlayer]--; //this should just remove the top card (the most recently drawn one).
+      z++;
     }
-    while(z-1>=0){
-        state->discard[currentPlayer][state->discardCount[currentPlayer]++]=temphand[z-1]; // discard all cards in play that have been drawn
-        z=z-1;
-    }
-    return 0;
+  }
+  while(z-1 >= 0)
+  {
+    state->discard[currentPlayer][state->discardCount[currentPlayer]++]=temphand[z-1]; // discard all cards in play that have been drawn
+    z=z-1;
+  }
+  return 0;
 }
 */
+//Bug - does not look for gold as a treasure card
+//Bug in cardEffect - playAdventurer return value does not leave the switch case -> tests 5 and 6 always fail
 
 int main(){
 
@@ -62,8 +70,9 @@ int main(){
 
     //Variables for gameStates and calculating random testing percentages
     struct gameState state, testState;
-    float test0 = 0, test1 = 0, test2 = 0, test3 = 0, test4 = 0, test5 = 0, test6 = 0, test7 = 0, test8 = 0, test9 = 0;
-    float falsePass = 0, falseFail = 0;
+    float test0 = 0.0, test1 = 0.0, test2 = 0.0, test3 = 0.0, test4 = 0.0, test5 = 0.0, test6 = 0.0, test7 = 0.0, test8 = 0.0, test9 = 0.0;
+    float falsePass = 0.0, falseFail = 0.0;
+    float totalPlayers = 0.0;
 
     //Loop to control number of random test iterations
     int i;
@@ -187,7 +196,9 @@ int main(){
 
         //Make sure opponent hand(s) remains unchanged
         int p;
+        //int v = 0;
         for(p = 1; p < numPlayers; p++){
+            totalPlayers++;
             //printf("Testing player %d\n", p + 1);
             if(rand_assert_true(compareInt(state.handCount[p], testState.handCount[p]))){
                 printf("\nTest 5: Test for no change in opponent's hand\n");
@@ -303,16 +314,16 @@ int main(){
     printf("Test Results - %d Iterations\n", i);
     printf("Test 0 Pass Rate: %.2f\n", ((numTests-test0)/numTests*100));
     printf("Test 1 Pass Rate: %.2f\n", ((numTests-test1)/numTests*100));
-    printf("   False Pass Rate (test passes with < 2 treasures in deck): %.2f\n", falsePass/(numTests-test0)*100);
-    printf("   False Failure Rate (test fails with >= 2 treasures in deck): %.2f\n", falseFail/test0*100);
+    printf("   False Pass Rate (test passes with < 2 treasures in deck): %.2f\n", falsePass/(numTests-test1)*100);
+    printf("   False Failure Rate (test fails with >= 2 treasures in deck): %.2f\n", falseFail/test1*100);
     printf("Test 2 Pass Rate: %.2f\n", ((numTests-test2)/numTests*100));
     printf("Test 3 Pass Rate: %.2f\n", ((numTests-test3)/numTests*100));
     printf("Test 4 Pass Rate: %.2f\n", ((numTests-test4)/numTests*100));
-    printf("Test 5 Pass Rate: %.2f\n", ((numTests-test5)/numTests*100));
-    printf("Test 6 Pass Rate: %.2f\n", ((numTests-test6)/numTests*100));
-    printf("Test 7 Pass Rate: %.2f\n", ((numTests-test7)/numTests*100));
-    printf("Test 8 Pass Rate: %.2f\n", ((numTests-test8)/numTests*100));
-    printf("Test 9 Pass Rate: %.2f\n\n\n", ((numTests-test9)/numTests*100));
+    printf("Test 5 Pass Rate: %.2f\n", ((totalPlayers-test5)/(totalPlayers))*100);
+    printf("Test 6 Pass Rate: %.2f\n", ((totalPlayers-test6)/(totalPlayers))*100);
+    printf("Test 7 Pass Rate: %.2f\n", ((numTests*3-test7)/(numTests*3))*100);
+    printf("Test 8 Pass Rate: %.2f\n", ((numTests*10-test8)/(numTests*10))*100);
+    printf("Test 9 Pass Rate: %.2f\n\n\n", ((numTests*3-test9)/(numTests*3))*100);
 
     return 0;
 }

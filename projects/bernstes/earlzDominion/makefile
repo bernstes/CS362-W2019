@@ -84,6 +84,8 @@ randomtestresults: randomtestcard1 randomtestcard2 randomtestadventurer
 	gcov -f -b dominion.c | tee -a randomtestcard1.out randomtestcard2.out randomtestadventurer.out > /dev/null
 	cat dominion.c.gcov | tee -a randomtestcard1.out randomtestcard2.out randomtestadventurer.out > /dev/null
 
+alltests: unittestresults randomtestresults
+
 player: player.c interface.o
 	gcc -o player player.c -g  dominion.o rngs.o interface.o $(CFLAGS)
 

@@ -13,19 +13,22 @@
 #include <string.h>
 
 /*
-//bug - player will draw 10 cards instead of 3
-int smithy_function(struct gameState *state, int i, int currentPlayer, int handPos){
-    //player will draw 10 cards instead of the normal 3 cards
-    for (i = 0; i < 10; i++)
-    {
-        drawCard(currentPlayer, state);
-    }
+int playSmithy(struct gameState* state, int currentPlayer, int handPos)
+{
 
-    //discard card from hand
-    discardCard(handPos, currentPlayer, state, 0);
-    return 0;
+  int i;
+  //+3 Cards
+  for (i = 0; i < 4; i++)
+    drawCard(currentPlayer, state);
+
+  //discard card from hand
+  discardCard(handPos, currentPlayer, state, 0);
+
+  return 0;
 }
 */
+//Bug - Player draws 4 cards instead of 3
+
 
 int main(){
 

@@ -12,37 +12,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*
-//bug - 1 buy will be removed instead of being incremented
-int council_room_function(struct gameState *state, int i, int currentPlayer, int handPos){
-    //+4 Cards
-    for (i = 0; i < 4; i++)
-    {
-        drawCard(currentPlayer, state);
-    }
-
-    //+1 Buy
-    //state->numBuys++;
-
-    //remove 1 buy instead of incrementing
-    state->numBuys--;
-
-    //Each other player draws a card
-    for (i = 0; i < state->numPlayers; i++)
-    {
-        if ( i != currentPlayer )
-        {
-            drawCard(i, state);
-        }
-    }
-
-    //put played card in played card pile
-    discardCard(handPos, currentPlayer, state, 0);
-
-    return 0;
-}
-*/
-
 int main(){
 
     srand(time(NULL));
