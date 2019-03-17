@@ -37,7 +37,7 @@ protected void setUp() {
          testPartsIndex[index] = 0;
       }
    }
-
+/*
    public void testIsValid() {
         testIsValid(testUrlParts, UrlValidator.ALLOW_ALL_SCHEMES);
         setUp();
@@ -72,13 +72,14 @@ protected void setUp() {
       }
 
    }
-
+*/
    /**
     * Create set of tests by taking the testUrlXXX arrays and
     * running through all possible permutations of their combinations.
     *
     * @param testObjects Used to create a url.
     */
+   /*
    public void testIsValid(Object[] testObjects, long options) {
       UrlValidator urlVal = new UrlValidator(null, null, options);
       assertTrue(urlVal.isValid("http://www.google.com"));
@@ -121,7 +122,166 @@ protected void setUp() {
          System.out.println();
       }
    }
+*/
+    //Scheme Partition - Allow All Schemes
+    public void testYourFirstPartition() {
+        System.out.println("\nTesting Scheme:");
+        String[] validSchemes = {"http", "ftp", "h3t", "g0-to+."};
+        UrlValidator validScheme = new UrlValidator(validSchemes, UrlValidator.ALLOW_ALL_SCHEMES);
+        boolean result;
+        for (int i = 0; i < validSchemes.length; i++) {
+            result = validScheme.isValidScheme(validSchemes[i]);
+            System.out.println("\nTesting Valid Scheme: " + validSchemes[i]);
+            System.out.println("Expect: Pass");
+            if(result){
+                System.out.println("Actual: Pass");
+            } else {
+                System.out.println("Actual: Fail");
+            }
+        }
 
+        String[] invalidSchemes = {"3ht://", "http:", "http:/", "://"};
+        UrlValidator invalidScheme = new UrlValidator(invalidSchemes, UrlValidator.ALLOW_ALL_SCHEMES);
+        for (int i = 0; i < invalidSchemes.length; i++) {
+            result = invalidScheme.isValidScheme(invalidSchemes[i]);
+            System.out.println("\nTesting Invalid Scheme: " + invalidSchemes[i]);
+            System.out.println("Expect: Fail");
+            if (result) {
+                System.out.println("Actual: Pass");
+            } else {
+                System.out.println("Actual: Fail");
+            }
+        }
+    }
+
+    //Authority Partition
+    public void testYourSecondPartition() {
+        System.out.println("\nTesting Authority:");
+        String[] validAuths = {"www.google.com", "www.google.com.", "go.com", "255.255.255.255"};
+        UrlValidator validAuth = new UrlValidator(validAuths, 0);
+        boolean result;
+        for (int i = 0; i < validAuths.length; i++) {
+            result = validAuth.isValidAuthority(validAuths[i]);
+            System.out.println("\nTesting Valid Scheme: " + validAuths[i]);
+            System.out.println("Expect: Pass");
+            if(result){
+                System.out.println("Actual: Pass");
+            } else {
+                System.out.println("Actual: Fail");
+            }
+        }
+
+        String[] invalidAuths = {"", "1.2.3", ".aaa", "go.a1a"};
+        UrlValidator invalidAuth = new UrlValidator(invalidAuths, 0);
+        for (int i = 0; i < invalidAuths.length; i++) {
+            result = invalidAuth.isValidAuthority(invalidAuths[i]);
+            System.out.println("\nTesting Invalid Scheme: " + invalidAuths[i]);
+            System.out.println("Expect: Fail");
+            if (result) {
+                System.out.println("Actual: Pass");
+            } else {
+                System.out.println("Actual: Fail");
+            }
+        }
+    }
+
+    //Port Partition - use know valid authorities with valid/invalid ports
+    public void testYourThirdPartition() {
+        System.out.println("\nTesting Authority + Port:");
+        String[] validAuths = {"www.google.com", "www.google.com.", "go.com", "255.255.255.255"};
+        String[] validPorts = {":65535", ":0", ":80", ""};
+        boolean result;
+        for (int i = 0; i < validAuths.length; i++){
+            String combo = validAuths[i] + validPorts[i];
+            UrlValidator validPort = new UrlValidator();
+            result = validPort.isValidAuthority(combo);
+            System.out.println("\nTesting Valid Authority + Valid Port: " + combo);
+            System.out.println("Expect: Pass");
+            if(result){
+                System.out.println("Actual: Pass");
+            } else {
+                System.out.println("Actual: Fail");
+            }
+        }
+
+        String[] invalidPorts = {":-1", ":66666", ":80a", "::"};
+        for (int i = 0; i < validAuths.length; i++){
+            String combo = validAuths[i] + invalidPorts[i];
+            UrlValidator invalidPort = new UrlValidator();
+            result = invalidPort.isValidAuthority(combo);
+            System.out.println("\nTesting Valid Authority + Invalid Port: " + combo);
+            System.out.println("Expect: Fail");
+            if(result){
+                System.out.println("Actual: Pass");
+            } else {
+                System.out.println("Actual: Fail");
+            }
+        }
+    }
+
+    //Path Partition - Allow 2 Slashes
+    public void testYourFourthPartition() {
+        System.out.println("\nTesting Path:");
+        String[] validPaths = {"/t123", "/$23", "/test1//file", "/file"};
+        UrlValidator validPath = new UrlValidator(validPaths, UrlValidator.ALLOW_2_SLASHES);
+        boolean result;
+        for (int i = 0; i < validPaths.length; i++) {
+            result = validPath.isValidPath(validPaths[i]);
+            System.out.println("\nTesting Valid Path: " + validPaths[i]);
+            System.out.println("Expect: Pass");
+            if(result){
+                System.out.println("Actual: Pass");
+            } else {
+                System.out.println("Actual: Fail");
+            }
+        }
+
+        String[] invalidPaths = {"/..", "/#", "/../file", "/../"};
+        UrlValidator invalidPath = new UrlValidator(invalidPaths, UrlValidator.ALLOW_2_SLASHES);
+        for (int i = 0; i < invalidPaths.length; i++) {
+            result = invalidPath.isValidPath(invalidPaths[i]);
+            System.out.println("\nTesting Invalid Path: " + invalidPaths[i]);
+            System.out.println("Expect: Fail");
+            if(result){
+                System.out.println("Actual: Pass");
+            } else {
+                System.out.println("Actual: Fail");
+            }
+        }
+    }
+
+    //Query Partition
+    public void testYourFifthPartition(){
+        System.out.println("\nTesting Query:");
+        String[] validQueries = {"?action=view", "?action=edit", "?action=edit&mode=up", ""};
+        UrlValidator validQuery = new UrlValidator(validQueries, 0);
+        boolean result;
+        for (int i = 0; i < validQueries.length; i++) {
+            result = validQuery.isValidQuery(validQueries[i]);
+            System.out.println("\nTesting Valid Query: " + validQueries[i]);
+            System.out.println("Expect: Pass");
+            if(result){
+                System.out.println("Actual: Pass");
+            } else {
+                System.out.println("Actual: Fail");
+            }
+        }
+        /*
+        String[] invalidQueries = {"http://", "??action=view", "/action=view", "~?"};
+        UrlValidator invalidQuery = new UrlValidator(invalidQueries, 0);
+        for (int i = 0; i < invalidQueries.length; i++) {
+            result = invalidQuery.isValidQuery(invalidQueries[i]);
+            System.out.println("Testing Invalid Query: " + invalidQueries[i]);
+            System.out.println("Expect: Fail");
+            if(result){
+                System.out.println("Actual: Pass");
+            } else {
+                System.out.println("Actual: Fail");
+            }
+        }
+        */
+    }
+/*
    public void testValidator202() {
        String[] schemes = {"http","https"};
        UrlValidator urlValidator = new UrlValidator(schemes, UrlValidator.NO_FRAGMENTS);
@@ -327,7 +487,7 @@ protected void setUp() {
         assertFalse(urlValidator.isValid("http://example.rocks:65536/"));
         assertFalse(urlValidator.isValid("http://example.rocks:100000/"));
     }
-
+*/
     static boolean incrementTestPartsIndex(int[] testPartsIndex, Object[] testParts) {
       boolean carry = true;  //add 1 to lowest order part.
       boolean maxIndex = true;
@@ -364,7 +524,7 @@ protected void setUp() {
       return carryMsg.toString();
 
    }
-
+/*
    public void testValidateUrl() {
       assertTrue(true);
    }
@@ -494,7 +654,7 @@ protected void setUp() {
        assertTrue(validator.isValid("http://example.com/serach?address=Main%20Avenue"));
        assertTrue(validator.isValid("http://example.com/serach?address=Main+Avenue"));
    }
-
+*/
    //-------------------- Test data for creating a composite URL
    /**
     * The data given below approximates the 4 parts of a URL
