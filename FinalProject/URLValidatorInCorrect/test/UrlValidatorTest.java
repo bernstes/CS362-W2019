@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.util.Scanner;
 
 
-
 //You can use this as a skeleton for your 3 different test approach
 //It is an optional to use this file, you can generate your own test file(s) to test the target function!
 // Again, it is up to you to use this file or not!
@@ -66,8 +65,76 @@ public class urlValTest extends TestCase {
    
    public void testIsValid()
    {
-	   //You can use this function for programming based testing
+      //You can use this function for programming based testing
 
+
+      UrlValidator urlVal = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+      String[] validUrls = {
+         "http://www.google.com",
+         "http://www.google.com/",
+         "http://0.0.0.0/",
+         "http://www.google.com/valid",
+         "http://google.com/",
+         "http://www.google.com/valid/valid/valid/valid/valid/valid/valid",
+         "http://www.google.com/test?action=view",
+         "http://www.google.com/#/",
+         "http://www.google.com/23/",
+         "http://www.google.net",
+         "http://www.google.co.uk",
+         "http://www.google.com:0",
+         "http://www.google.com:6000"
+      };
+
+      String[] invalidUrls = {
+         "http://www.google.xdx/",
+         "http://www.google.xdx/", 
+         "http://www.google.bbbbb", 
+         "http://www.google.jfiekd", 
+         "ftp://www.google.jfiekd/", 
+         "htp:/www.google.com/", 
+         "255.255.255.255", 
+         "http://256.256.256.256", 
+         "ftp://256.256.256.256", 
+         "http://www.google.com/..//file", 
+         "http://www.google.com:-1", 
+         "http://www.google.com:65a", 
+         "http://www.google.com/test//testfile", 
+         "http://localhost/", 
+         "http://machine/", 
+         "http://localhost:8000",  
+         "ftp://localhost:8000", 
+         "http://machine:0", 
+         "http://www.google.com/invalid//invalid", 
+         "ftp://www.google.com/invalid//invalid", 
+         "ftp://www.google.com/invalid//invalid//invalid"
+      };
+
+      for (int i = 0; i < validUrls.length; i++)
+      {
+         StringBuilder s = new StringBuilder();
+         Boolean isValid = urlVal.isValid(validUrls[i]);
+         if (isValid == false)
+         {
+            s.append("URL VALIDATOR FAILED: ");
+         }
+         s.append("Url tested was: " + validUrls[i] + "The expect result was true\n");
+         String out = s.toString();
+         System.out.println(out);
+      }
+
+      for (int i = 0; i < invalidUrls.length; i++)
+      {
+         StringBuilder s = new StringBuilder();
+         Boolean isValid = urlVal.isValid(validUrls[i]);
+         if (isValid == false)
+         {
+            s.append("URL VALIDATOR FAILED: ");
+         }
+         s.append("Url tested was: " + validUrls[i] + "The expect result was false\n");
+         String out = s.toString();
+         System.out.println(out);
+      }
+      
    }
 }
 
