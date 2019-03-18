@@ -16,6 +16,8 @@
  */
 
 import junit.framework.TestCase;
+import java.io.*;
+import java.util.Random;
 
 /**
  * Performs Validation Test for url validations.
@@ -31,65 +33,7 @@ public class UrlValidatorTest extends TestCase {
       super(testName);
    }
 
-   @Override
-protected void setUp() {
-      for (int index = 0; index < testPartsIndex.length - 1; index++) {
-         testPartsIndex[index] = 0;
-      }
-   }
-
-   /**
-    * Create set of tests by taking the testUrlXXX arrays and
-    * running through all possible permutations of their combinations.
-    *
-    * @param testObjects Used to create a url.
-    */
-   /*
-   public void testIsValid(Object[] testObjects, long options) {
-      UrlValidator urlVal = new UrlValidator(null, null, options);
-      assertTrue(urlVal.isValid("http://www.google.com"));
-      assertTrue(urlVal.isValid("http://www.google.com/"));
-      int statusPerLine = 60;
-      int printed = 0;
-      if (printIndex)  {
-         statusPerLine = 6;
-      }
-      do {
-          StringBuilder testBuffer = new StringBuilder();
-         boolean expected = true;
-         for (int testPartsIndexIndex = 0; testPartsIndexIndex < testPartsIndex.length; ++testPartsIndexIndex) {
-            int index = testPartsIndex[testPartsIndexIndex];
-            ResultPair[] part = (ResultPair[]) testObjects[testPartsIndexIndex];
-            testBuffer.append(part[index].item);
-            expected &= part[index].valid;
-         }
-         String url = testBuffer.toString();
-         boolean result = urlVal.isValid(url);
-         assertEquals(url, expected, result);
-         if (printStatus) {
-            if (printIndex) {
-               System.out.print(testPartsIndextoString());
-            } else {
-               if (result == expected) {
-                  System.out.print('.');
-               } else {
-                  System.out.print('X');
-               }
-            }
-            printed++;
-            if (printed == statusPerLine) {
-               System.out.println();
-               printed = 0;
-            }
-         }
-      } while (incrementTestPartsIndex(testPartsIndex, testObjects));
-      if (printStatus) {
-         System.out.println();
-      }
-   }
-*/
-
-    //Scheme Partition - Allow All Schemes
+        //Scheme Partition - Allow All Schemes
     public void testYourFirstPartition() {
         System.out.println("\nPartition Testing Scheme:");
         String[] validSchemes = {"http", "ftp", "h3t", "g0-to+."};
@@ -304,147 +248,109 @@ protected void setUp() {
             String out = s.toString();
             System.out.println(out);
         }
-
     }
 
-    static boolean incrementTestPartsIndex(int[] testPartsIndex, Object[] testParts) {
-      boolean carry = true;  //add 1 to lowest order part.
-      boolean maxIndex = true;
-      for (int testPartsIndexIndex = testPartsIndex.length - 1; testPartsIndexIndex >= 0; --testPartsIndexIndex) {
-         int index = testPartsIndex[testPartsIndexIndex];
-         ResultPair[] part = (ResultPair[]) testParts[testPartsIndexIndex];
-         maxIndex &= (index == (part.length - 1));
-         if (carry) {
-            if (index < part.length - 1) {
-               index++;
-               testPartsIndex[testPartsIndexIndex] = index;
-               carry = false;
-            } else {
-               testPartsIndex[testPartsIndexIndex] = 0;
-               carry = true;
+    public void testManualTest()
+    {
+        //You can use this function to implement your manual testing
+        System.out.println("\nManual Testing");
+        UrlValidator urlVal = new UrlValidator();
+
+        String inFile = "urltests.csv";
+
+        BufferedReader br = null;
+        String line = "";
+        String csvSplitBy = ",";
+
+        try {
+
+            br = new BufferedReader(new FileReader(inFile));
+            while ((line = br.readLine()) != null) {
+                String[] url = line.split(csvSplitBy);
+                System.out.println("\nThe url tested is " + url[0] + " The tested value is " + urlVal.isValid(url[0]) + " and the expect value is " + url[1]);
             }
-         }
-      }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void testIsValidRandom()
+    {
+
+        System.out.println("\nStart random testing for valid URLs - all expected to pass\n");
+
+        String validSchemes[] = {"http://", "https://", "ftp://", "h3t://"};
+        String validAuthorities[] = {"www.apple.com", "www.google.com.", "oregonstate.edu", "123.com", "255.255.255.255", "www.navy.mil"};
+        String validPorts[] = {":80", "", ":8080", ":0", ":65535"};
+        String validPaths[] = {"/foo", "/f567", "/$98", "/bar/", "", "/foo/bar/"};
+        String validQueries[] = {"", "?foo=bar", "?foo=bar&test=HelloWorld"};
+
+        UrlValidator testURL = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+        boolean result;
+        for(int i = 0; i < 500; i++)
+        {
+
+            String scheme = validSchemes[new Random().nextInt(validSchemes.length)];
+            String authority = validAuthorities[new Random().nextInt(validAuthorities.length)];
+            String port = validPorts[new Random().nextInt(validPorts.length)];
+            String path = validPaths[new Random().nextInt(validPaths.length)];
+            String query = validQueries[new Random().nextInt(validQueries.length)];
+            String random_url = scheme+authority+port+path+query;
+            System.out.println("Currently Testing: " + random_url);
+            result = testURL.isValid(scheme+authority+port+path+query);
+            if(result){
+                System.out.println("Test Passed");
+            } else {
+                System.out.println("Test Failed");
+            }
+        }
+
+        System.out.println("End random testing for valid URLs\n");
+    }
+
+    public void testIsInvalidRandom()
+    {
+
+        System.out.println("\nStart random testing for invalid URLs - all expected to fail\n");
+
+        String invalidSchemes[] = {"http//", "://", "http/", "https:", "3ft://", "http:/" };
+        String invalidAuthorities[] = {"1.2.3", "1.2.3.4.5", "1.2.3.4.", "256.256.256.256", "aaa."};
+        String invalidPorts[] = {":-9", ":75636", ":99999999999", ":12z", "4$44", ":00a"};
+        String invalidPaths[] = {"/..", "/../../", "/foo//bar", "////////pathQuery#Fragment", "/../file", "/#/file"};
+        String validQueries[] = {"", "?foo=bar", "?foo=bar&test=HelloWorld", "/home/index.html"};
 
 
-      return (!maxIndex);
-   }
+        UrlValidator testURL = new UrlValidator(null, null, UrlValidator.ALLOW_ALL_SCHEMES);
+        boolean result;
+        for(int i = 0; i < 500; i++)
+        {
 
-   private String testPartsIndextoString() {
-       StringBuilder carryMsg = new StringBuilder("{");
-      for (int testPartsIndexIndex = 0; testPartsIndexIndex < testPartsIndex.length; ++testPartsIndexIndex) {
-         carryMsg.append(testPartsIndex[testPartsIndexIndex]);
-         if (testPartsIndexIndex < testPartsIndex.length - 1) {
-            carryMsg.append(',');
-         } else {
-            carryMsg.append('}');
-         }
-      }
-      return carryMsg.toString();
+            String scheme = invalidSchemes[new Random().nextInt(invalidSchemes.length)];
+            String authority = invalidAuthorities[new Random().nextInt(invalidAuthorities.length)];
+            String port = invalidPorts[new Random().nextInt(invalidPorts.length)];
+            String path = invalidPaths[new Random().nextInt(invalidPaths.length)];
+            String query = validQueries[new Random().nextInt(validQueries.length)];
+            String random_url = scheme+authority+port+path+query;
+            System.out.println("Currently Testing: " + random_url);
+            result = testURL.isValid(scheme+authority+port+path+query);
+            if(result){
+                System.out.println("Test Passed");
+            } else {
+                System.out.println("Test Failed");
+            }
+        }
 
-   }
-
-   //-------------------- Test data for creating a composite URL
-   /**
-    * The data given below approximates the 4 parts of a URL
-    * <scheme>://<authority><path>?<query> except that the port number
-    * is broken out of authority to increase the number of permutations.
-    * A complete URL is composed of a scheme+authority+port+path+query,
-    * all of which must be individually valid for the entire URL to be considered
-    * valid.
-    */
-   ResultPair[] testUrlScheme = {new ResultPair("http://", true),
-                               new ResultPair("ftp://", true),
-                               new ResultPair("h3t://", true),
-                               new ResultPair("3ht://", false),
-                               new ResultPair("http:/", false),
-                               new ResultPair("http:", false),
-                               new ResultPair("http/", false),
-                               new ResultPair("://", false)};
-
-   ResultPair[] testUrlAuthority = {new ResultPair("www.google.com", true),
-                                  new ResultPair("www.google.com.", true),
-                                  new ResultPair("go.com", true),
-                                  new ResultPair("go.au", true),
-                                  new ResultPair("0.0.0.0", true),
-                                  new ResultPair("255.255.255.255", true),
-                                  new ResultPair("256.256.256.256", false),
-                                  new ResultPair("255.com", true),
-                                  new ResultPair("1.2.3.4.5", false),
-                                  new ResultPair("1.2.3.4.", false),
-                                  new ResultPair("1.2.3", false),
-                                  new ResultPair(".1.2.3.4", false),
-                                  new ResultPair("go.a", false),
-                                  new ResultPair("go.a1a", false),
-                                  new ResultPair("go.cc", true),
-                                  new ResultPair("go.1aa", false),
-                                  new ResultPair("aaa.", false),
-                                  new ResultPair(".aaa", false),
-                                  new ResultPair("aaa", false),
-                                  new ResultPair("", false)
-   };
-   ResultPair[] testUrlPort = {new ResultPair(":80", true),
-                             new ResultPair(":65535", true), // max possible
-                             new ResultPair(":65536", false), // max possible +1
-                             new ResultPair(":0", true),
-                             new ResultPair("", true),
-                             new ResultPair(":-1", false),
-                             new ResultPair(":65636", false),
-                             new ResultPair(":999999999999999999", false),
-                             new ResultPair(":65a", false)
-   };
-   ResultPair[] testPath = {new ResultPair("/test1", true),
-                          new ResultPair("/t123", true),
-                          new ResultPair("/$23", true),
-                          new ResultPair("/..", false),
-                          new ResultPair("/../", false),
-                          new ResultPair("/test1/", true),
-                          new ResultPair("", true),
-                          new ResultPair("/test1/file", true),
-                          new ResultPair("/..//file", false),
-                          new ResultPair("/test1//file", false)
-   };
-   //Test allow2slash, noFragment
-   ResultPair[] testUrlPathOptions = {new ResultPair("/test1", true),
-                                    new ResultPair("/t123", true),
-                                    new ResultPair("/$23", true),
-                                    new ResultPair("/..", false),
-                                    new ResultPair("/../", false),
-                                    new ResultPair("/test1/", true),
-                                    new ResultPair("/#", false),
-                                    new ResultPair("", true),
-                                    new ResultPair("/test1/file", true),
-                                    new ResultPair("/t123/file", true),
-                                    new ResultPair("/$23/file", true),
-                                    new ResultPair("/../file", false),
-                                    new ResultPair("/..//file", false),
-                                    new ResultPair("/test1//file", true),
-                                    new ResultPair("/#/file", false)
-   };
-
-   ResultPair[] testUrlQuery = {new ResultPair("?action=view", true),
-                              new ResultPair("?action=edit&mode=up", true),
-                              new ResultPair("", true)
-   };
-
-   Object[] testUrlParts = {testUrlScheme, testUrlAuthority, testUrlPort, testPath, testUrlQuery};
-   Object[] testUrlPartsOptions = {testUrlScheme, testUrlAuthority, testUrlPort, testUrlPathOptions, testUrlQuery};
-   int[] testPartsIndex = {0, 0, 0, 0, 0};
-
-   //---------------- Test data for individual url parts ----------------
-   private final String[] schemes = {"http", "gopher", "g0-To+.",
-                                      "not_valid" // TODO this will need to be dropped if the ctor validates schemes
-                                    };
-
-   ResultPair[] testScheme = {new ResultPair("http", true),
-                            new ResultPair("ftp", false),
-                            new ResultPair("httpd", false),
-                            new ResultPair("gopher", true),
-                            new ResultPair("g0-to+.", true),
-                            new ResultPair("not_valid", false), // underscore not allowed
-                            new ResultPair("HtTp", true),
-                            new ResultPair("telnet", false)};
-
-
+        System.out.println("\nEnd random testing for invalid URLs");
+    }
 }
 
