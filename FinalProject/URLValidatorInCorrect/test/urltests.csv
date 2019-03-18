@@ -25,7 +25,7 @@
 "http://www.google.com/test//testfile", "False"
 "http://localhost/", "False"
 "http://machine/", "False"
-"http://localhost:8000", "False"
+"http://localhost:8000", "False" 
 "ftp://localhost:8000", "False"
 "http://machine:0", "False"
 "http://www.google.com/invalid//invalid", "False"
