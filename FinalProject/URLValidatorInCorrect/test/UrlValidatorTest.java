@@ -5,6 +5,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.FileReader;
 import java.util.Scanner;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 
 //You can use this as a skeleton for your 3 different test approach
@@ -39,6 +41,7 @@ public class urlValTest extends TestCase {
       String line = "";
       String csvSplitBy = ",";
 
+      try {
 
          br = new BufferedReader(new FileReader(inFile));
          while ((line = br.readLine()) != null) {
@@ -47,6 +50,25 @@ public class urlValTest extends TestCase {
             System.out.println("The url tested is " + url[0] + "The tested value is " + urlVal.isValid(url[0]) + " and the expect value is " + url[1]);
 
          }	   
+
+
+      } catch (FileNotFoundException e) {
+         e.printStackTrace();
+      } catch (IOException e) {
+         e.printStackTrace();
+      } finally {
+         if (br != null) {
+            try {
+               br.close();
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
+         }
+      }
+      
+
+
+         
 
 }
    
@@ -135,6 +157,12 @@ public class urlValTest extends TestCase {
          System.out.println(out);
       }
       
+   }
+
+   public static void main(String[] args) {
+      urlValTest tester = new urlValTest("testing");
+      tester.testManualTest();
+      tester.testIsValid();
    }
 }
 
