@@ -359,7 +359,9 @@ public class UrlValidator implements Serializable {
             return false;
         }
 
-        if (isOff(ALLOW_ALL_SCHEMES) && !allowedSchemes.contains(scheme.toLowerCase(Locale.ENGLISH))) {
+        //Bugged Code - isOff changed to isOn
+        //if (isOff(ALLOW_ALL_SCHEMES) && !allowedSchemes.contains(scheme.toLowerCase(Locale.ENGLISH))) {
+        if (isOn(ALLOW_ALL_SCHEMES) && !allowedSchemes.contains(scheme.toLowerCase(Locale.ENGLISH))) {
             return false;
         }
 
@@ -451,7 +453,8 @@ public class UrlValidator implements Serializable {
         try {
             URI uri = new URI(null,null,path,null);
             String norm = uri.normalize().getPath();
-            if (norm.startsWith("/../") // Trying to go via the parent dir 
+            //if (norm.startsWith("/../") // Trying to go via the parent dir
+            if (norm.startsWith("/") // Bugged Code - paths can start with "/"
              || norm.equals("/..")) {   // Trying to go to the parent dir
                 return false;
             }
